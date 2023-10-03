@@ -1,24 +1,29 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://Sophyatp2:<password>@cluster0.gchsrrd.mongodb.net/?retryWrites=true&w=majority";
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-  
-});
-async function run() {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
-  }
+const bancoDados = require("mongodb").MongoClient;
+const ObjectId = require("mongodb").ObjectId;
+//const { MongoClient } = require('mongodb');
+
+const uri = "mongodb+srv://cesar:rasec@tp2.bmv5w.mongodb.net/tp2?retryWrites=true&w=majority";
+/*const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+client.connect(err => {
+const collection = client.db("tp2").collection("operacoes");
+console.log("Conectado ao banco de dados")
+// perform actions on the collection object
+client.close();
+});*/
+
+bancoDados.connect(uri)
+.then(conn => global.conn = conn.db("tp2"))
+.catch(err => console.log(err))
+
+function busqueTodas() {
+return global.conn.collection("usuarios-sophya").find().toArray();
 }
-run().catch(console.dir);
+
+function salvar(usuario) {
+return global.conn.collection("usuarios-sophya").insertOne(usuario);
+}
+
+function apagarUmaOperacao(id) {
+return global.conn.collection("usuarios-sophya").deleteOne({ _id: ObjectId(id) });
+}
+module.exports = { busqueTodas, salvar, apagarUmaOperacao };
