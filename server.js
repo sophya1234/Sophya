@@ -1,11 +1,23 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const dotenv = require('dotenv')
 const app = express()
+
+if(process.env.config === 'dev'){
+    dotenv.config({
+        path: './config/.env.dev'
+    })
+}
+if(process.env.config ===  'prod'){
+    dotenv.config({
+        path: './config/.env.prod'
+    })
+}
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-mongoose.connect('mongodb://127.0.0.1/db')
+mongoose.connect(process.env.DB)
 .then(() => console.log('Mongodb Conectado!'))
 .catch(err => console.log('err' + err))
 
@@ -26,8 +38,6 @@ const usuarios = mongoose.Schema({
 
 mongoose.model('usuarios', usuarios)
 const Usuario = new mongoose.model('usuarios')
-
-
 
 app.post('/create', async (req, res) => {
     let _id = req.body._id
@@ -63,5 +73,4 @@ app.delete('/delete/:id', async (req, res) => {
 app.use((req, res) => {
     res.send({ message: 'Rota Inexistente!' })
 })
-
 app.listen(3000, () => console.log(`server rodando`))
