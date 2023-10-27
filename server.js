@@ -44,7 +44,7 @@ app.post('/create', async (req, res) => {
     let nome = req.body.nome
     let email = req.body.email
     let senha = req.body.senha
-    await Usuario.insertMany({
+    await Usuario.create({
         _id,
         nome,
         email,
@@ -52,7 +52,7 @@ app.post('/create', async (req, res) => {
     })
     res.send({ message: "Dados salvos com sucesso!" })
 })
-https://github.com/sophya1234/TP2-2023-Sophya.git
+
 app.post('/read', async (req, res) => {
    const showUser = await Usuario.findOne({_id: req.body._id})
    res.send({ message: showUser })
@@ -68,6 +68,12 @@ app.delete('/delete/:id', async (req, res) => {
     const data = await Usuario.findOneAndDelete({ _id: req.params.id }, { _id: req.params.id })
     if(!data) return res.send({ message: "id inexistente!" })
     res.send({ message: "Dados apagados com sucesso!" }) 
+})
+
+app.post('/login', async (req, res) => {
+    const { email, senha } = req.body;
+    await Usuario.findOne({ email: email, senha: senha })
+    res.send({ message: "Login efetuado com sucesso" })
 })
 
 app.use((req, res) => {
